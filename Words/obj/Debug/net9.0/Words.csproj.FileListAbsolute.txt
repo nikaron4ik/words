@@ -26,3 +26,4 @@
 /Users/nikita/prog/Internship/words/Words/bin/Debug/net9.0/Words.pdb
 /Users/nikita/prog/Internship/words/Words/obj/Debug/net9.0/Words.genruntimeconfig.cache
 /Users/nikita/prog/Internship/words/Words/obj/Debug/net9.0/ref/Words.dll
+/Users/nikita/prog/Internship/words/Words/obj/Debug/net9.0/Words.sourcelink.json
