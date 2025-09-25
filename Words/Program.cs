@@ -24,44 +24,56 @@ class Program
                 Console.WriteLine("Введено некорректное значение!");
                 continue;
             }
-            int option = Convert.ToInt32(inp);
-            switch (option)
+            if (int.TryParse(inp, out int option))
             {
-                case 1:
-                    {
-                        Console.WriteLine("Язык игры");
-
-                        Console.WriteLine("1. Русский");
-                        Console.WriteLine("2. English");
-                        Console.WriteLine("3. Вернуться в главное меню");
-                        Console.Write("Выберите опцию: ");
-                        string? subInp = Console.ReadLine();
-
-                        if (subInp == null)
+                switch (option)
+                {
+                    case 1:
                         {
-                            Console.WriteLine("Введено некорректное значение!");
-                            continue;
+                            Console.WriteLine("Язык игры");
+
+                            Console.WriteLine("1. Русский");
+                            Console.WriteLine("2. English");
+                            Console.WriteLine("3. Вернуться в главное меню");
+                            Console.Write("Выберите опцию: ");
+                            string? subInp = Console.ReadLine();
+
+                            if (subInp == null)
+                            {
+                                Console.WriteLine("Введено некорректное значение!");
+                                continue;
+                            }
+                            if (int.TryParse(subInp, out int subOption))
+                            {
+                                switch (subOption)
+                                {
+                                    case 1:
+                                        startGame(getInitialWord(Language.Russian));
+                                        break;
+                                    case 2:
+                                        startGame(getInitialWord(Language.English));
+                                        break;
+                                    case 3:
+                                        break;
+                                }
+                                
+                            } else
+                            {
+                                Console.WriteLine("Введено некорректное значение!");
+                            }
+                            break;
                         }
-                        int subOption = Convert.ToInt32(subInp);
-                        switch (subOption)
-                        {
-                            case 1:
-                                startGame(getInitialWord(Language.Russian));
-                                break;
-                            case 2:
-                                startGame(getInitialWord(Language.English));
-                                break;
-                            case 3:
-                                break;
-                        }
+                    case 2:
+                        Console.WriteLine("Спасибо за игру!");
+                        return;
+                    default:
+                        Console.WriteLine("Введено некорректное значение!");
                         break;
-                    }
-                case 2:
-                    Console.WriteLine("Спасибо за игру!");
-                    return;
-                default:
-                    Console.WriteLine("Введено некорректное значение!");
-                    break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Введено некорректное значение!");
             }
         }
 
@@ -83,29 +95,45 @@ class Program
 
     private static string getInitialWord(Language language)
     {   
+        List<string> defaultEnglishWords = new List<string>{  "pronunciation", "recognition", "professionality", "specification", "organization", "dependency",
+                                                              "exhibition", "demonstration", "embarrassment", "knowledge", "happiness", "obfuscation", 
+                                                              "information", "atmosphere", "characteristics", "misunderstanding", "communication", "accident"};
+        List<string> defaultRussianWords = new List<string> { "агрегация", "расширение", "абракадабра", "аббревиатура", "параллелепипед", "раздражение",
+                                                              "прерогатива", "перекрёсток", "пересечение", "уведомление", "разработка", "произношение", 
+                                                              "адекватность", "центробежность", "фрустрация", "деобфускация", "заготовка", "интуиция", 
+                                                            };
+
         Regex englishLetters = new Regex(@"^[a-zA-Z]+$");
         Regex russianLetters = new Regex(@"^[а-яА-Я]+$");
 
-        Console.WriteLine("Введите начальное слово:");
+        Console.WriteLine("Введите начальное слово (от 8 до 30 символов):");
         string? word = Console.ReadLine();
-
-        if (word == null) return language == Language.Russian ? "абракадабра" : "pronunciation";
+           
+        if (word == null)
+        {
+            Random random = new Random();
+            return (language == Language.Russian ? defaultRussianWords[random.Next(defaultRussianWords.Count)] : defaultEnglishWords[random.Next(defaultEnglishWords.Count)]);
+        }
 
         if (language == Language.Russian)
         {
-            if (russianLetters.IsMatch(word))
+            if (russianLetters.IsMatch(word) && (word.Length >= 8 && word.Length <= 30))
             {
                 return word;
             }
-            return "абракадабра";                       // TODO: пока также затычка, позже придумать что-то адекватнее
+            Random random = new Random();
+            Console.WriteLine("Введённое слово не соответствует условиям, начальное слово будет выбрано случайно!");
+            return defaultRussianWords[random.Next(defaultRussianWords.Count)];
         }
         else
         {
-            if (englishLetters.IsMatch(word))
+            if (englishLetters.IsMatch(word) && (word.Length >= 8 && word.Length <= 30))
             {
                 return word;
             }
-            return "pronunciation";                     // TODO: также затычка, позже придумать, как грамотнее обработать
+            Random random = new Random();
+            Console.WriteLine("Введённое слово не соответствует условиям, начальное слово будет выбрано случайно!");
+            return defaultEnglishWords[random.Next(defaultEnglishWords.Count)];
         }
     }
 
