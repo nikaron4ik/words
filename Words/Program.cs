@@ -1,16 +1,21 @@
 ﻿
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using Timer = System.Timers.Timer;
 
 class Program
 {
 
-    static readonly List<string> DefaultEnglishWords = new List<string>{  "pronunciation", "recognition", "professionality", "specification", "organization", "dependency",
+    static readonly ImmutableArray<string> DefaultEnglishWords = ImmutableArray.Create(
+                                                              "pronunciation", "recognition", "professionality", "specification", "organization", "dependency",
                                                               "exhibition", "demonstration", "embarrassment", "knowledge", "happiness", "obfuscation",
-                                                              "information", "atmosphere", "characteristics", "misunderstanding", "communication", "accident"};
-    static readonly List<string> DefaultRussianWords = new List<string> { "агрегация", "расширение", "абракадабра", "аббревиатура", "параллелепипед", "раздражение",
+                                                              "information", "atmosphere", "characteristics", "misunderstanding", "communication", "accident"
+                                                              );
+    static readonly ImmutableArray<string> DefaultRussianWords = ImmutableArray.Create( 
+                                                              "агрегация", "расширение", "абракадабра", "аббревиатура", "параллелепипед", "раздражение",
                                                               "прерогатива", "перекрёсток", "пересечение", "уведомление", "разработка", "произношение",
-                                                              "адекватность", "центробежность", "фрустрация", "деобфускация", "заготовка", "интуиция"};
+                                                              "адекватность", "центробежность", "фрустрация", "деобфускация", "заготовка", "интуиция"
+                                                              );
 
 
     enum Language { English, Russian }
@@ -144,8 +149,8 @@ class Program
     {
         Random random = new Random();
         return language == Language.Russian 
-            ? DefaultRussianWords[random.Next(DefaultRussianWords.Count)] 
-            : DefaultEnglishWords[random.Next(DefaultEnglishWords.Count)];
+            ? DefaultRussianWords[random.Next(DefaultRussianWords.Length)] 
+            : DefaultEnglishWords[random.Next(DefaultEnglishWords.Length)];
     }
 
 
