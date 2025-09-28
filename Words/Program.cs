@@ -128,9 +128,9 @@ class Program
     {
         if (word == null) return false;
 
-        Regex regex = language == Language.Russian 
-            ? new Regex(@"^[a-zA-Z]+$") 
-            : new Regex(@"^[а-яА-Я]+$");
+        Regex regex = language == Language.Russian
+            ? new Regex(@"^[а-яА-Я]+$")
+            : new Regex(@"^[a-zA-Z]+$"); 
 
         if (regex.IsMatch(word) && word.Length >= 8 && word.Length <= 30)
         {
@@ -162,19 +162,12 @@ class Program
 
             (string? word, bool isTimeOut) playerInput = HandlePlayerInputWithTimer();
 
-            if (playerInput.isTimeOut == true || (playerInput.word == null  || playerInput.word == ""))
-            {
-                TimeOutOrNotCorrectWordLossMessage(player, playerInput.isTimeOut);
-                break;
-            }
+
+            if (HasPlayerLost(playerInput.word, playerInput.isTimeOut, player)) break;
 
             string word = playerInput.word.ToLower();
 
-            if (usedWords.Contains(word))
-            {
-                Console.WriteLine("Слово уже было использовано ранее, придумайте другое!");
-                continue;
-            }
+            if (IsWordAlreadyUsed(word, usedWords)) continue;
 
             if (IsWordCorrect(word, startWordLetters))
             {
@@ -184,7 +177,7 @@ class Program
             }
             else
             {
-                Console.WriteLine($"Слово не подходит! Игрок {GetCurrentPlayer(player)} проиграл!");
+                Console.WriteLine($"Слово не подходит! Игрок {GetPlayerNumber(player)} проиграл!");
                 break;
             }
 
@@ -193,7 +186,7 @@ class Program
         return;
     }
 
-    /*
+    /* 
      *  Questionable checking, because in order to see time expired message user need to press "Enter" button,
      *  cuz Console.Readline() doesn't end automatically even after thread.Interrput(),
      *  but I don't know how to fix it properly right now, maybe will find any good way later
@@ -239,7 +232,7 @@ class Program
         Console.WriteLine($"Начальное слово: {startWord}");
     }
 
-    static string GetCurrentPlayer(Player player)
+    static string GetPlayerNumber(Player player)
     {
         return player == Player.First ? "1" : "2";
     }
@@ -249,14 +242,36 @@ class Program
         return player == Player.First ? Player.Second : Player.First;
     }
 
-    static void TimeOutOrNotCorrectWordLossMessage(Player player, bool isTimeOut)
+    static bool HasPlayerLost(string? word, bool isTimeOut, Player player)
+    {
+        if (isTimeOut == true || (word == null || word == ""))
+        {
+            ShowLossMessage(player, isTimeOut);
+            return true;
+        }
+        return false;
+    }
+
+    static bool IsWordAlreadyUsed(string word, HashSet<string> usedWords)
+    {
+        if (usedWords.Contains(word))
+        {
+            Console.WriteLine("Слово уже было использовано ранее, придумайте другое!");
+            return true;
+        }
+        return false;
+    }
+
+    static void ShowLossMessage(Player player, bool isTimeOut)
     {
         if (isTimeOut)
         {
-            Console.WriteLine($"К сожалению, время на ввод уже вышло! Игрок {GetCurrentPlayer(player)} проиграл!");
+            Console.WriteLine($"К сожалению, время на ввод уже вышло! Игрок {GetPlayerNumber(player)} проиграл!");
         }
-
-        Console.WriteLine($"Строка не была введена! Игрок {GetCurrentPlayer(player)} проиграл!");
+        else
+        {
+            Console.WriteLine($"Строка не была введена! Игрок {GetPlayerNumber(player)} проиграл!");
+        }
     }
 
     static Dictionary<char, int> DivideWordIntoLetters(string word)
